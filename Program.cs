@@ -21,29 +21,33 @@ namespace Performer
                 {
                     ConfigureLogging(options);
 
-                    var result = await new PerformenceTester(options).Run();
+                    var result = await new PerformanceTester(options).Run();
 
-
-                    using (var writer = new StreamWriter($"{options.OutputPath}\\file.csv"))
-                    using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
-                    {
-                        csv.WriteRecords(result.Iterations.Select(iteration =>
-                        {
-                            var x = new ExpandoObject() as IDictionary<string, Object>;
-                            x.Add("Iteration Number", iteration.Iteration);
-                            x.Add("Total (ms)", iteration.Duration.TotalMilliseconds);
-
-                            var stepNumber = 0;
-                            foreach (var step in iteration.Steps)
-                            {
-                                stepNumber++;
-                                x.Add($"Step {stepNumber}: {step.Name} (ms)", step.Duration.TotalMilliseconds);
-                            }
-
-                            return x as dynamic;
-                        }));
-                    }
+                    WriteCsv(options, result);
                 });
+        }
+
+        private static void WriteCsv(Options options, TestResult result)
+        {
+            using (var writer = new StreamWriter($"{options.OutputPath}\\file.csv"))
+            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            {
+                csv.WriteRecords(result.Iterations.Select(iteration =>
+                {
+                    var x = new ExpandoObject() as IDictionary<string, Object>;
+                    x.Add("Iteration Number", iteration.Iteration);
+                    x.Add("Total (ms)", iteration.Duration.TotalMilliseconds);
+
+                    var stepNumber = 0;
+                    foreach (var step in iteration.Steps)
+                    {
+                        stepNumber++;
+                        x.Add($"Step {stepNumber}: {step.Name} (ms)", step.Duration.TotalMilliseconds);
+                    }
+
+                    return x as dynamic;
+                }));
+            }
         }
 
         private static void ConfigureLogging(Options options)

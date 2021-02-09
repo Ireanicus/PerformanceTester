@@ -5,14 +5,14 @@ using System.Threading.Tasks;
 using CliWrap;
 using NLog;
 
-public class PerformenceTester
+public class PerformanceTester
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
     public string OutputPath { get; }
     public string WorkingPath { get; }
     public int IterationCount { get; } = 100;
 
-    public PerformenceTester(Options options)
+    public PerformanceTester(Options options)
     {
         OutputPath = options.OutputPath;
         WorkingPath = options.WorkingPath;
